@@ -23,6 +23,7 @@ Este projeto foi criado para:
 - **Uvicorn** para desenvolvimento local
 - **MongoDB** como banco de dados
 - **Docker** / **docker-compose** (opcional)
+- **Loguru** para loggings 
 
 ---
 

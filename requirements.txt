@@ -9,9 +9,3 @@ loguru
 prometheus-client
 pdfplumber
 python-multipart
-
-# Test & Dev
-pytest
-pytest-asyncio
-httpx
-testcontainers

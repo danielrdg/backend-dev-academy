@@ -1,7 +1,11 @@
 fastapi
 uvicorn[standard]
 motor
-pydantic<2.0.0
+pydantic
 python-dotenv
-loguru
 openai
+google-cloud-aiplatform
+loguru
+prometheus-client
+pdfplumber
+python-multipart

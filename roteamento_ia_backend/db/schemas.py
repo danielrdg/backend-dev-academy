@@ -24,3 +24,8 @@ class ExecutionOut(BaseModel):
     output: Any
     latency_ms: int
     cost: float
+
+class PromptMetrics(BaseModel):
+    total_executions: int
+    avg_latency_ms: float
+    avg_cost: float

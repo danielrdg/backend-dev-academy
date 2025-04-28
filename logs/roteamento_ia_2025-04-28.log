@@ -1,2 +1,4 @@
 2025-04-28 10:23:57.699 | INFO     | roteamento_ia_backend.main:startup_event:16 - Aplicacao iniciada
 2025-04-28 10:24:10.076 | INFO     | roteamento_ia_backend.main:shutdown_event:20 - Aplicacao encerrando
+2025-04-28 10:42:20.785 | INFO     | roteamento_ia_backend.main:startup_event:16 - Aplicacao iniciada
+2025-04-28 10:48:13.053 | INFO     | roteamento_ia_backend.main:shutdown_event:20 - Aplicacao encerrando

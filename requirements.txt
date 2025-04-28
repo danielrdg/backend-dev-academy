@@ -9,3 +9,4 @@ loguru
 prometheus-client
 pdfplumber
 python-multipart
+pytesseract

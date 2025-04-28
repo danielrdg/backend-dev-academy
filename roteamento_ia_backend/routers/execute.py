@@ -2,6 +2,7 @@ import time
 from fastapi import APIRouter, HTTPException
 from roteamento_ia_backend.db.schemas import ExecutionIn, ExecutionOut
 from roteamento_ia_backend.db.crud import get_prompt_by_id, create_execution
+from roteamento_ia_backend.core.openai_service import generate_completion
 
 router = APIRouter()
 
@@ -13,7 +14,7 @@ async def execute(payload: ExecutionIn):
 
     text = prompt.template.format(**payload.variables)
     start = time.time()
-    result_text = f"Mock resposta: {text}"
+    result_text = await generate_completion(text, payload.ia_model)
     latency = int((time.time() - start) * 1000)
     cost = 0.0
 

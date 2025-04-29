@@ -9,7 +9,7 @@ if not openai.api_key:  # Verifica se a chave da API está definida
     raise RuntimeError("OPENAI_API_KEY não definida em .env")
 
 
-async def generate_completion(prompt: str, model: str = "gpt-3.5-turbo") -> str:
+async def generate_openai_completion(prompt: str, model: str = "gpt-3.5-turbo") -> str:
     resp = await openai.ChatCompletion.acreate(
         model=model,
         messages=[{"role": "user", "content": prompt}]

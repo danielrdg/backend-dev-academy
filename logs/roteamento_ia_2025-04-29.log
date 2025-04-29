@@ -1,0 +1,8 @@
+2025-04-29 14:27:21.360 | INFO     | roteamento_ia_backend.main:startup_event:16 - Aplicacao iniciada
+2025-04-29 14:27:44.200 | INFO     | roteamento_ia_backend.main:shutdown_event:20 - Aplicacao encerrando
+2025-04-29 14:34:07.417 | INFO     | roteamento_ia_backend.main:startup_event:16 - Aplicacao iniciada
+2025-04-29 14:34:57.005 | INFO     | roteamento_ia_backend.main:shutdown_event:20 - Aplicacao encerrando
+2025-04-29 14:36:59.983 | INFO     | roteamento_ia_backend.main:startup_event:16 - Aplicacao iniciada
+2025-04-29 14:40:34.960 | INFO     | roteamento_ia_backend.main:shutdown_event:20 - Aplicacao encerrando
+2025-04-29 14:50:47.292 | INFO     | roteamento_ia_backend.main:startup_event:16 - Aplicacao iniciada
+2025-04-29 14:51:30.735 | INFO     | roteamento_ia_backend.main:shutdown_event:20 - Aplicacao encerrando

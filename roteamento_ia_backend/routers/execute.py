@@ -3,8 +3,8 @@ import time, json
 
 from roteamento_ia_backend.db.schemas import ExecutionOut
 from roteamento_ia_backend.db.crud import get_prompt_by_id, create_execution
-from roteamento_ia_backend.core.openai.openai_client import generate_openai_completion
-from roteamento_ia_backend.core.gemini.gemini_client import generate_gemini_completion
+from roteamento_ia_backend.core.openai.openai_service import generate_openai_completion
+from roteamento_ia_backend.core.gemini.gemini_service import generate_gemini_completion
 from roteamento_ia_backend.utils.file_utils import extract_text_from_pdf, file_to_base64
 
 router = APIRouter()

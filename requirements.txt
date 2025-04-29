@@ -10,3 +10,4 @@ prometheus-client
 pdfplumber
 python-multipart
 pytesseract
+pydantic-settings

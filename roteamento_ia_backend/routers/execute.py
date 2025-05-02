@@ -61,7 +61,7 @@ async def _execute_prompt(
     })
     return ExecutionOut(output=result, latency_ms=latency, cost=cost)
 
-@router.post("/execute/openai", response_model=ExecutionOut)
+@router.post("/openai", response_model=ExecutionOut)
 async def execute_openai(
     prompt_id: str         = Form(...),
     ia_model: str          = Form(...),
@@ -79,7 +79,7 @@ async def execute_openai(
         prompt_id, ia_model, vars_dict, input_payload, generate_openai_completion, True
     )
 
-@router.post("/execute/gemini", response_model=ExecutionOut)
+@router.post("/gemini", response_model=ExecutionOut)
 async def execute_gemini(
     prompt_id: str         = Form(...),
     ia_model: str          = Form(...),

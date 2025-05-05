@@ -1,5 +1,3 @@
-# roteamento_ia_backend/core/gemini/gemini_client.py
-
 import os
 from google.genai import Client
 from google.genai import types

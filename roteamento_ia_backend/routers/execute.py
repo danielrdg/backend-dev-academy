@@ -66,7 +66,7 @@ async def _select_model_fn(ia_model: str):
         return generate_openai_completion, True
     return generate_gemini_completion, False
 
-@router.post("/execute", response_model=ExecutionOut)
+@router.post("", response_model=ExecutionOut)
 async def execute_default(
     prompt_id: str = Form(...),
     ia_model: str = Form("gemini-1.5"),
@@ -85,7 +85,7 @@ async def execute_default(
     generate_fn, is_async = await _select_model_fn(ia_model)
     return await _execute_prompt(prompt_id, ia_model, vars_dict, input_payload, generate_fn, is_async)
 
-@router.post("/execute/{ia_model}", response_model=ExecutionOut)
+@router.post("/{ia_model}", response_model=ExecutionOut)
 async def execute_with_model(
     ia_model: str = Path(..., description="Nome do modelo de IA (ex: gemini-1.5)"),
     prompt_id: str = Form(...),

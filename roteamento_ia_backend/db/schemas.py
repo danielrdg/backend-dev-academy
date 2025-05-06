@@ -32,8 +32,8 @@ class ExecutionIn(BaseModel):
 
     @model_validator(mode="after")
     def check_either_input_or_file(cls, m):
-        has_input = m.get("input") is not None
-        has_file = m.get("input_file") is not None
+        has_input = m.input is not None  # Use attribute access instead
+        has_file = m.input_file is not None  # Use attribute access instead
         if has_input == has_file:
             raise ValueError("Informe exatamente um dos campos: 'input' ou 'input_file'.")
         return m

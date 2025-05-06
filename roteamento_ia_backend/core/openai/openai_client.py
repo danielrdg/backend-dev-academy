@@ -1,12 +1,11 @@
 import os
 from dotenv import load_dotenv
-import openai
+from openai import OpenAI
 
-load_dotenv()  
-openai.api_key = os.getenv("OPENAI_API_KEY")
-if not openai.api_key:  
+load_dotenv()
+
+api_key = os.getenv("OPENAI_API_KEY")
+if not api_key:
     raise RuntimeError("OPENAI_API_KEY não definida em .env")
 
-client = openai.ChatCompletion
-if not client:  
-    raise RuntimeError("Falha ao criar o cliente ChatCompletion")
+client = OpenAI(api_key=api_key)

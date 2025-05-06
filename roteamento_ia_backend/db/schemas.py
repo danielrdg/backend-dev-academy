@@ -1,5 +1,5 @@
 from typing import List, Any, Dict, Optional
-from pydantic import BaseModel, Field, root_validator
+from pydantic import BaseModel, Field, model_validator
 from fastapi import UploadFile
 
 class PromptCreate(BaseModel):
@@ -17,6 +17,11 @@ class PromptOut(BaseModel):
     variables: List[str]
 
 
+class InputPayload(BaseModel):
+    type: str
+    data: Any
+
+
 class ExecutionIn(BaseModel):
     prompt_id: str
     ia_model: Optional[str] = None
@@ -25,13 +30,13 @@ class ExecutionIn(BaseModel):
     input: Optional[InputPayload] = None
     input_file: Optional[UploadFile] = None
 
-    @root_validator
-    def check_either_input_or_file(cls, values):
-        has_input = values.get("input") is not None
-        has_file = values.get("input_file") is not None
+    @model_validator(mode="after")
+    def check_either_input_or_file(cls, m):
+        has_input = m.get("input") is not None
+        has_file = m.get("input_file") is not None
         if has_input == has_file:
             raise ValueError("Informe exatamente um dos campos: 'input' ou 'input_file'.")
-        return values
+        return m
 
 
 
@@ -45,8 +50,4 @@ class PromptMetrics(BaseModel):
     total_executions: int
     avg_latency_ms: float
     avg_cost: float
-
-class InputPayload(BaseModel):
-    type: str
-    data: Any
 

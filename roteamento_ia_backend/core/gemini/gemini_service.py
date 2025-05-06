@@ -16,5 +16,5 @@ def generate_gemini_completion(
     """
     client = GeminiClient()
     response = client.generate(prompt, model=model)
-    return response.text
+    return response
 

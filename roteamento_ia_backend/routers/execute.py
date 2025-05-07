@@ -8,7 +8,7 @@ from roteamento_ia_backend.db.schemas import InputPayload, ExecutionIn, Executio
 from roteamento_ia_backend.db.crud import get_prompt_by_id, create_execution
 from roteamento_ia_backend.core.openai.openai_service import generate_openai_completion
 from roteamento_ia_backend.core.gemini.gemini_service import generate_gemini_completion
-from roteamento_ia_backend.utils.file_utils import extract_text_from_pdf, extract_text_from_image, file_to_base64
+from roteamento_ia_backend.utils.file_utils import extract_text_from_pdf, extract_text_from_image, file_to_base64, prepare_file_for_ai
 from roteamento_ia_backend.core.logging import logger
 
 router = APIRouter()
@@ -25,29 +25,32 @@ async def _execute_common(payload: ExecutionIn) -> ExecutionOut:
     vars_dict = payload.variables
 
     # Extrai apenas o texto ou conteúdo dos inputs
-    user_text = ""
+    user_input = {}
     input_payload = {}
     
     if payload.input:
         input_payload = payload.input.dict()
         # Extrai apenas o texto do input
-        user_text = input_payload.get('data', '')
+        user_input = {
+            "type": "text", 
+            "content": input_payload.get('data', '')
+        }
     else:
         input_file = payload.input_file  # garantido pelo model_validator
-        mime = input_file.content_type
-        if mime == "application/pdf":
-            user_text = await extract_text_from_pdf(input_file)
-        elif mime.startswith("image/") or mime.startswith("audio/"):
-            # Para arquivos binários, mantemos a forma base64 para o modelo processar
-            user_text = f"data:{mime};base64," + await file_to_base64(input_file)
-        else:
-            raw = await input_file.read()
-            user_text = raw.decode("utf-8", errors="ignore")
+        
+        # Use the enhanced file processing utility
+        file_data = await prepare_file_for_ai(input_file)
+        
+        user_input = {
+            "type": file_data["content_type"],  # "text" or "image"
+            "content": file_data["content"]     # extracted text or base64 image
+        }
             
         input_payload = {
-            "file_name": input_file.filename,
-            "mime_type": mime,
-            "content": user_text,
+            "file_name": file_data["file_name"],
+            "mime_type": file_data["mime_type"],
+            "content_type": file_data["content_type"],
+            "content": file_data["content"],
         }
 
     # Busca e renderiza o prompt
@@ -65,16 +68,25 @@ async def _execute_common(payload: ExecutionIn) -> ExecutionOut:
 
     # Seleciona engine de IA
     generate_fn, is_async = await _select_model_fn(ia_model)
+    
+    # Customiza o prompt final dependendo do tipo de input
+    if user_input["type"] == "text":
+        final_prompt = f"{rendered}\n\nUser Input: {user_input['content']}"
+    elif user_input["type"] == "image":
+        # Para imagens, incorporamos os dados base64 diretamente
+        final_prompt = f"{rendered}\n\nAnalyze the following image:\n{user_input['content']}"
+    else:
+        final_prompt = f"{rendered}\n\nUser Input: {user_input['content']}"
 
-    # Executa IA e mede latência - passando apenas o texto do usuário
+    # Executa IA e mede latência
     start = time.time()
     try:
         logger.info(f"Executando modelo {ia_model} com prompt: {rendered[:100]}...")
         
         if is_async:
-            result = await generate_fn(f"{rendered}\n\nUser Input: {user_text}", ia_model)
+            result = await generate_fn(final_prompt, ia_model)
         else:
-            result = generate_fn(f"{rendered}\n\nUser Input: {user_text}", ia_model)
+            result = generate_fn(final_prompt, ia_model)
             
         # Converte resultado para formato serializável se necessário
         serializable_result = _ensure_serializable(result)

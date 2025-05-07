@@ -11,3 +11,11 @@ pdfplumber
 python-multipart
 pytesseract
 pydantic-settings
+google-genai
+httpx
+pytest
+pytest-asyncio
+pytest-cov
+pytest-mock
+mongomock
+aiofiles    

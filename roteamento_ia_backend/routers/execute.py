@@ -1,4 +1,3 @@
-# File: roteamento_ia_backend/routers/execute.py
 from fastapi import APIRouter, HTTPException, Path, Form, File, UploadFile
 from typing import Tuple, Optional, Dict, Any
 import time, json
@@ -19,8 +18,8 @@ async def _select_model_fn(ia_model: str) -> Tuple:
         return generate_openai_completion, True
     return generate_gemini_completion, False
 
-async def _execute_common(payload: ExecutionIn) -> ExecutionOut:
-    """Lógica comum de execução a partir de um ExecutionIn validado."""
+async def _execute_common(payload: ExecutionIn, custom_template: Optional[str] = None) -> ExecutionOut:
+    """Lógica comum de execução a partir de um ExecutionIn validado com suporte a template personalizado."""
     ia_model = payload.ia_model or "gemini-1.5"
     vars_dict = payload.variables
 
@@ -59,7 +58,9 @@ async def _execute_common(payload: ExecutionIn) -> ExecutionOut:
         raise HTTPException(status_code=404, detail="Prompt não encontrado")
     
     try:
-        rendered = prompt.template.format(**vars_dict)
+        # Use o template personalizado se disponível, caso contrário, use o template do banco de dados
+        template_to_use = custom_template if custom_template else prompt.template
+        rendered = template_to_use.format(**vars_dict)
     except KeyError as e:
         raise HTTPException(
             status_code=400, 
@@ -165,9 +166,11 @@ async def execute_default(
     variables: str = Form("{}"),
     input_text: Optional[str] = Form(None),
     input_file: Optional[UploadFile] = File(None),
+    custom_template: Optional[str] = Form(None),
 ):
     """
     Executa um prompt de IA (texto ou arquivo) via multipart/form-data.
+    Opcionalmente aceita um template personalizado que substitui o template original.
     """
     try:
         vars_dict = json.loads(variables)
@@ -188,7 +191,7 @@ async def execute_default(
         raise HTTPException(status_code=400, detail="É preciso enviar `input_text` ou um `input_file`")
 
     payload = ExecutionIn(**payload_data)
-    return await _execute_common(payload)
+    return await _execute_common(payload, custom_template)
 
 @router.post("/{ia_model}", response_model=ExecutionOut)
 async def execute_with_model(
@@ -197,9 +200,11 @@ async def execute_with_model(
     variables: str = Form("{}"),
     input_text: Optional[str] = Form(None),
     input_file: Optional[UploadFile] = File(None),
+    custom_template: Optional[str] = Form(None),
 ):
     """
     Executa um prompt de IA usando o modelo especificado na URL via multipart/form-data.
+    Opcionalmente aceita um template personalizado que substitui o template original.
     """
     try:
         vars_dict = json.loads(variables)
@@ -220,4 +225,4 @@ async def execute_with_model(
         raise HTTPException(status_code=400, detail="É preciso enviar `input_text` ou um `input_file`")
 
     payload = ExecutionIn(**payload_data)
-    return await _execute_common(payload)
+    return await _execute_common(payload, custom_template)
